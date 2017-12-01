@@ -4,13 +4,33 @@ title:  "Create Avatars for users using Devise and Paperclip"
 date:   2017-12-01 12:00:43 -0800
 categories: jekyll update
 ---
+
+Devise is a great way to quickly setup user authentication quickly on your site.  It provides the helper methods, views and controllers you will need for authentication.
+
+First you need to install the gem in your Gemfile
 {% highlight ruby %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
+gem 'devise'
 {% endhighlight %}
+
+Next in the terminal run
+{% highlight bash %}
+rails generate devise:install
+{% endhighlight %}
+
+Now we want to to add a model for devise to authenticate, user
+{% highlight bash %}
+rails generate devise user
+{% endhighlight %}
+
+Now that we have a user we can genrate the views to login, logout, sign up etc.
+{% highlight bash %}
+rails generate devise:views
+{% endhighlight %}
+
+And that 
+
+
+
 
 {% highlight bash %}
  brew install imagemagick
@@ -74,13 +94,5 @@ end
 {% endhighlight %}
 
 {% highlight bash %}
-rails generate devise:install
-{% endhighlight %}
-
-{% highlight bash %}
-rails generate devise user
-{% endhighlight %}
-
-{% highlight bash %}
-rails generate devise:install
+rails generate devise:views
 {% endhighlight %}
