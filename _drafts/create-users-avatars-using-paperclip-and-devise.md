@@ -61,17 +61,29 @@ Then go to app/assets/stylesheets/application.css.  Rename the file from .css to
 Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Devise did not generate a username in our database or views so we will need to make them ourselves.
 
 {% highlight bash %}
- rails g migration create_username_column
+ rails g migration add_username_column
+{% endhighlight %}
+
+open the file created in the db/migrate folder and add inside of class AddUsernameColumn:
+{% highlight ruby %}
+def change
+  add_column :users, :username, :string
+  add_index :users, :username, unique: true
+end
+{% endhighlight %}
+This creates a column in user that stores username as a string, the index requires username to be unique so that multiple users can't have the same username.
+
+Great now we need to take user input from sign up and add an input for them to put a username.
+Open app/views/devise/registrations both files new.html.erb and edit.html.erb.  Right below the field for email add this code for a username field.
+{% highlight erb %}
+  <div class="field">
+    <%= f.label :username %><br />
+    <%= f.text_field :username, autofocus: true %>
+  </div>
 {% endhighlight %}
 
 
 
-
-
-
-
-add_column :users, :username, :string
-add_index :users, :username, unique: true
 
 {% highlight bash %}
  brew install imagemagick
