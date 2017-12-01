@@ -22,28 +22,56 @@ Now we want to to add a model for devise to authenticate.  Lets choose user.
 rails generate devise user
 {% endhighlight %}
 
-Now that we have a user we can genrate the views to login, logout, sign up etc.
+Now that we have a user we can generate the views to login, logout, sign up etc.
 {% highlight bash %}
 rails generate devise:views
 {% endhighlight %}
 
-When we created the user model we also created a migration to store the user in out database
+When we created the user model we also created a migration to store the user in our database. Let's update our schema.
 {% highlight bash %}
 rails db:migrate
 {% endhighlight %}
 
 And that is it! We can now successfully authenticate users!
 
+While we can sign in by going to /users/sign_in that isn't very practical.  Lets make a navbar so that users can log in and out.  In our app/views/layouts/application.hmtl.erb add this to the body above yield.
 {% highlight erb %}
-<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+...
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
   <% if current_user %>
+    <p> Welcome <% username.email %>
     <a class="navbar-brand"><%= link_to 'Edit Profile',edit_user_registration_path %></a>
     <a class="navbar-brand  ml-auto"><%= link_to 'Logout', destroy_user_session_path, method: :delete %></a>
   <% else %>
     <a class="navbar-brand ml-auto"><%= link_to 'Login', new_user_session_path %></a>
   <% end %>
 </nav>
+...
 {% endhighlight %}
+
+This navbar will not work unless you have bootstrap in your project. To add it to your project install bootstrap in your Gemfile.
+{% highlight ruby %}
+gem 'bootstrap'
+{% endhighlight %}
+Then go to app/assets/stylesheets/application.css.  Rename the file from .css to .scss to make it a Sass stylesheet and add this line of code to the top.
+{% highlight scss %}
+@import "bootstrap";
+{% endhighlight %}
+
+Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Devise did not generate a username in our database or views so we will need to make them ourselves.
+
+{% highlight bash %}
+ rails g migration create_username_column
+{% endhighlight %}
+
+
+
+
+
+
+
+add_column :users, :username, :string
+add_index :users, :username, unique: true
 
 {% highlight bash %}
  brew install imagemagick
