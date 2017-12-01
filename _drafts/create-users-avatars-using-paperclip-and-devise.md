@@ -39,7 +39,7 @@ While we can sign in by going to /users/sign_in that isn't very practical.  Lets
 ...
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <% if current_user %>
-    <p> Welcome <% username.email %>
+    <p> Welcome <%= current_user.email %>
     <a class="navbar-brand"><%= link_to 'Edit Profile',edit_user_registration_path %></a>
     <a class="navbar-brand  ml-auto"><%= link_to 'Logout', destroy_user_session_path, method: :delete %></a>
   <% else %>
@@ -82,26 +82,53 @@ Open app/views/devise/registrations both files new.html.erb and edit.html.erb.  
   </div>
 {% endhighlight %}
 
+If we were to go to the sign up view our code isn't showing on the page! This is because our devise configuration doesn't allow views to be changed.  Go to config/initializers/devise.rb and un comment this line.
+{% highlight ruby %}
+  config.scoped_views = true
+{% endhighlight %}
 
+Great now users can sign up with a username! But wait they can input the username but it isn't being saved.  This is because of how rails deals with security issues.  Each controller must explicitly say what params it will accept.  Open the file app/controllers/application_controller.rb and add this below protect_from_forgery.
+{% highlight ruby %}
+...
+before_action :configure_permitted_parameters, if: :devise_controller
 
+protected
+def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :email, :password])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:username, :email, :password, :current_password])
+end
+...
+{% endhighlight %}
 
+Now we can save username! Lets display that on our navbar changing from email to username
+{% highlight erb %}
+...
+    <p> Welcome <%= current_user.username %>
+...
+{% endhighlight %}
+
+So now We have successfully implemented devise and customized it for username.  Lets customize user again with an avatar that will display in our navbar.
+
+We will user paperclip uploading the image but we will also need imagemagick to process the image. In the console type:
 {% highlight bash %}
  brew install imagemagick
 {% endhighlight %}
-
+Next add paperclick to your gem file:
 {% highlight ruby %}
 gem 'paperclip'
-gem 'devise'
 {% endhighlight %}
 
+Run:
 {% highlight bash %}
   bundle install
 {% endhighlight %}
 
+Just like adding usernames we need to add avatars to our users with a migration
 {% highlight bash %}
 rails generate migration add_avatars_to_users
 {% endhighlight %}
 
+In our created migration file add this.
 {% highlight ruby %}
 class AddAvatarsToUsers < ActiveRecord::Migration
   def self.up
@@ -116,10 +143,13 @@ class AddAvatarsToUsers < ActiveRecord::Migration
 end
 {% endhighlight %}
 
+Again we migrate to update the scheema.
 {% highlight bash %}
 rake db:migrate
 {% endhighlight %}
 
+
+In our existing user class we add the following code.
 {% highlight ruby %}
 class User < ActiveRecord::Base
   # existing code
@@ -144,8 +174,4 @@ class ApplicationController < ActionController::Base
         devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:name, :email, :password, :current_password, :is_female, :date_of_birth, :avatar) }
     end
 end
-{% endhighlight %}
-
-{% highlight bash %}
-rails generate devise:views
 {% endhighlight %}
