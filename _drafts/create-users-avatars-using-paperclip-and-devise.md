@@ -5,7 +5,7 @@ date:   2017-12-01 12:00:43 -0800
 categories: jekyll update
 ---
 
-Devise is a great way to quickly setup user authentication quickly on your site.  It provides the helper methods, views and controllers you will need for authentication.
+Devise is a great way to quickly setup user authentication quickly on your site.  It provides the helper methods, views, routes, and controllers you will need for authentication.
 
 First you need to install the gem in your Gemfile
 {% highlight ruby %}
@@ -17,7 +17,7 @@ Next in the terminal run
 rails generate devise:install
 {% endhighlight %}
 
-Now we want to to add a model for devise to authenticate, user
+Now we want to to add a model for devise to authenticate.  Lets choose user.
 {% highlight bash %}
 rails generate devise user
 {% endhighlight %}
@@ -27,10 +27,23 @@ Now that we have a user we can genrate the views to login, logout, sign up etc.
 rails generate devise:views
 {% endhighlight %}
 
-And that 
+When we created the user model we also created a migration to store the user in out database
+{% highlight bash %}
+rails db:migrate
+{% endhighlight %}
 
+And that is it! We can now successfully authenticate users!
 
-
+{% highlight erb %}
+<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+  <% if current_user %>
+    <a class="navbar-brand"><%= link_to 'Edit Profile',edit_user_registration_path %></a>
+    <a class="navbar-brand  ml-auto"><%= link_to 'Logout', destroy_user_session_path, method: :delete %></a>
+  <% else %>
+    <a class="navbar-brand ml-auto"><%= link_to 'Login', new_user_session_path %></a>
+  <% end %>
+</nav>
+{% endhighlight %}
 
 {% highlight bash %}
  brew install imagemagick
