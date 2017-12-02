@@ -1,9 +1,11 @@
 ---
 layout: post
-title:  "Create Avatars for users using Devise and Paperclip"
+title:  "Creating a Dropdown Navbar With Users and Avatars"
 date:   2017-12-01 12:00:43 -0800
 categories: jekyll update
 ---
+This guide will use Devise, Paperclip, and Bootstrap to quickly implement a powerful navbar to allow users to create accounts, log in, log out, edit profiles, add avatars, all from an elegent drop down navbar.
+
 
 Devise is a great way to quickly setup user authentication quickly on your site.  It provides the helper methods, views, routes, and controllers you will need for authentication.
 
@@ -59,6 +61,8 @@ Then go to app/assets/stylesheets/application.css.  Rename the file from .css to
 {% endhighlight %}
 
 Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Devise did not generate a username in our database or views so we will need to make them ourselves.
+
+![User Schema]({{ "/assets/default_user_schema.png" | absolute_url }})
 
 {% highlight bash %}
  rails g migration add_username_column
