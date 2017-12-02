@@ -1,14 +1,9 @@
-Follow along with the jekyll documentation on setting up a blog.  Then document that as my first blog post.
+A Journey to Becoming A Rubyist
+==============================
 
-Installation requirements:
-* > Ruby 2.1
-* RubyGems
-* GCC check by running gcc-v
-* Make check by running make-v
-* Gem install Jekyl
-* Gem install Rouge for syntax highlighting
-* jekyll new my_blog
-* add gem 'jekyll-livereload' into Gemfile in the group :jekyll_plugins do
-* jekyll serve
-* create drafts folder to create posts that are unfisnished, drafts are just posts without a update
-* jekyll serve --drafts
+Author:
+Mark Helt
+
+Description:
+------------
+You are never done learning especially in the programing field.  As I learn and make new projects I document them in a way I hope others can learn from.  Blog posts and tutorials have been instrumental in my learning and hopefully someone will find these posts helpful to them as well. 
