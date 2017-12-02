@@ -60,10 +60,10 @@ Then go to app/assets/stylesheets/application.css.  Rename the file from .css to
 @import "bootstrap";
 {% endhighlight %}
 
-Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Devise did not generate a username in our database or views so we will need to make them ourselves.
-
+Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Looking at the schema build by Devise there is no column to store a username in our database.
 ![User Schema]({{ "/assets/default_user_schema.png" | absolute_url }})
 
+We will have to do that ourselves in the terminal:
 {% highlight bash %}
  rails g migration add_username_column
 {% endhighlight %}
@@ -147,13 +147,17 @@ class AddAvatarsToUsers < ActiveRecord::Migration
 end
 {% endhighlight %}
 
-Again we migrate to update the scheema.
+Again we migrate to update the schema.
 {% highlight bash %}
 rake db:migrate
 {% endhighlight %}
 
+The commands in that migration were pretty new to me so a quick look at the schema shows what happened to our users tables.
+![After Migration]({{ "/assets/after_migration.png" | absolute_url }})
 
-In our existing user class we add the following code.
+As you can see four lines were added.
+
+Now we need to update our User mode with the following code.
 {% highlight ruby %}
 class User < ActiveRecord::Base
   # existing code
@@ -162,20 +166,28 @@ class User < ActiveRecord::Base
   validates_attachment_content_type :avatar, :content_type => /\Aimage\/.*\Z/
 end
 {% endhighlight %}
+This attaches the uploaded file to our user model
 
 
+Again in order to user the avatar params we must permit it in the application_controller.rb, lets add :avatar to those params
 {% highlight ruby %}
 class ApplicationController < ActionController::Base
-    # Prevent CSRF attacks by raising an exception.
-    # For APIs, you may want to use :null_session instead.
     protect_from_forgery with: :exception
-    before_filter :configure_permitted_parameters, if: :devise_controller?
+
+    before_action :configure_permitted_parameters, if: :devise_controller
 
     protected
-
     def configure_permitted_parameters
-        devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:name, :email, :password) }
-        devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:name, :email, :password, :current_password, :is_female, :date_of_birth, :avatar) }
+        devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :email, :password, :avatar])
+        devise_parameter_sanitizer.permit(:account_update, keys: [:username, :email, :password, :current_password, :avatar])
     end
 end
+{% endhighlight %}
+
+Now we add the form input in the views like we did for username.  In the new and edit views add above the  username field.
+{% highlight erb %}
+<div class="field">
+  <%= f.label :avatar  %>
+  <%= f.file_field :avatar %>
+</div>
 {% endhighlight %}
