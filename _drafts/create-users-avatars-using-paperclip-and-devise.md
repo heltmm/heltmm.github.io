@@ -191,3 +191,9 @@ Now we add the form input in the views like we did for username.  In the new and
   <%= f.file_field :avatar %>
 </div>
 {% endhighlight %}
+
+A link to the finished repository for this project can be found at
+
+
+
+[dropdown-navbar-template]: https://github.com/heltmm/Dropdown-NavBar-Template
