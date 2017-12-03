@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Creating a Dropdown Navbar With Users and Avatars"
+title:  "Old Version"
 date:   2017-12-01 12:00:43 -0800
 categories: jekyll update
 ---

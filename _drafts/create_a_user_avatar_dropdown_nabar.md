@@ -1,19 +1,18 @@
 ---
 layout: post
-title:  "Changes"
+title:  "Creating a Dropdown Navbar With Users and Avatars "
 date:   2017-12-01 12:00:43 -0800
 categories: jekyll update
 ---
 This guide will use Devise, Paperclip, and Bootstrap to quickly implement a powerful navbar to allow users to create accounts, log in, log out, edit profiles, add avatars, all from an elegent drop down navbar.  Similar to Github.
 
-
 Devise is a great way to quickly setup user authentication quickly on your site.  It provides the helper methods, views, routes, and controllers you will need for authentication.
 
-Paperclip is an easy way to have users upload files.  Perfect for avatar uploads.
+Paperclip is an easy way to have users upload files.  Perfect for user selected avatars.
 
-Bootstrap is a great JS/CSS library to help make your webpage look great.
+Bootstrap is an extensive JS/CSS library to help make your webpage look great.
 
-First Lets install the gems necesary to implement these features into your project.  We install jquery-rails as it is a dependency of bootstrap.  In your Gemfile add:
+First Lets install the gems necesary to implement these features into your project.  We install jquery-rails as well as it is a dependency of bootstrap.  In your Gemfile add:
 {% highlight ruby %}
 gem 'jquery-rails'
 gem 'devise'
@@ -37,14 +36,13 @@ Now we want to to add a model for devise to authenticate.  Lets call that model 
 {% highlight bash %}
 rails generate devise user
 {% endhighlight %}
-This command generated a user.rb file in models, a migration file in db/migrate and a line in routes.rb for users
+This command generated a user.rb file in models, a migration file in db/migrate and a line in routes.rb for users views
 
-Now that we have a user model we can generate the views to login, logout, sign up etc. Run:
+Now that we have a user model and routes we can generate the views to login, logout, sign up etc. Run:
 {% highlight bash %}
 rails generate devise:views
 {% endhighlight %}
 This creates a devise folder in views with all the views built and ready to use!
-
 
 When we created the user model we also created a migration to store the user in our database. Let's update our schema.
 {% highlight bash %}
@@ -52,9 +50,9 @@ rails db:migrate
 {% endhighlight %}
 If this is for a new project you will need to run `rails db:create` before `rails db:migrate`
 
-This creates a user Table in our schema.rb with what the migration file commands.  And that is it! We can now successfully authenticate users!
+This creates a user Table in our schema.rb following the migrate file we created.  And that is it! We can now successfully authenticate users!
 
-If we run: `rails s` and serve out website we can sign in by going to localhost:3000/users/sign_in but that isn't very practical.  Lets make a navbar so that users can log in and out.  In our app/views/layouts/application.hmtl.erb add this to the body above yield.
+If we run: `rails s` and serve out website we can sign in by going to localhost:3000/users/sign_in but that isn't very practical.  Lets make a navbar so that users can log in and out.  In our app/views/layouts/application.hmtl.erb add this to the top of the body.
 {% highlight erb %}
 ...
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -82,7 +80,7 @@ Because we are doing a dropdown navbar we will also some bootstrap javascript fe
 //= require bootstrap
 {% endhighlight %}
 
-Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Looking at the schema build by Devise there is no column to store a username in our database.
+Now a user can quickly log in and out using the navbar.  But its a bit odd to welcome a user by their email.  It would be better to use a username.  Looking at the schema.rb built by Devise there is no column to store a username in our database.
 ![User Schema]({{ "/assets/default_user_schema.png" | absolute_url }})
 
 We will have to do that ourselves through a migration, in the terminal run:
@@ -90,7 +88,7 @@ We will have to do that ourselves through a migration, in the terminal run:
  rails g migration add_username_column
 {% endhighlight %}
 
-open the file created in the db/migrate folder and add  this code inside of def change.
+open the file created in the db/migrate folder and add these lines of code inside of def change.
 {% highlight ruby %}
 ...
   add_column :users, :username, :string
@@ -131,7 +129,7 @@ end
 {% endhighlight %}
 This explicitly lists the parameters that devise will allow.
 
-Side note: you might be wondering to yourself if every controller must explicitly allow params why are we modifying our apication_controller instead of a devise controller.  This is because we do not have access to the devise_controller as there isn't one in our controllers folder.  This controller is in the devise gem but if you read this line again `before_action :configure_permitted_parameters, if: :devise_controller` it makes sense that when we are calling the devise_controller in our application_controller we configure permitted paramaters for the devise_controller.
+Side note: you might be wondering to yourself if every controller must explicitly allow params why are we modifying our application controller instead of a devise controller.  This is because we do not have access to the devise_controller as there isn't one in our controllers folder.  This controller is in the devise gem but if you read this line again, `before_action :configure_permitted_parameters, if: :devise_controller` it makes sense that when we are calling the devise controller in our application controller we set the permitted parameters for the devise controller.
 
 Now we can save username! Lets display that on our navbar changing from email to username
 {% highlight erb %}
@@ -172,9 +170,9 @@ Again we migrate to update the schema.
 rake db:migrate
 {% endhighlight %}
 
-The commands in that migration were pretty new to me so a quick look at the schema shows what happened to our users tables.
+The commands in that migration are not as strait forward as the last so lets look at the schema.rb that was built after we migrated and see what changes happened to our users tables.
 ![After Migration]({{ "/assets/after_migration.png" | absolute_url }})
-As you can see four lines were added to store the avatar information.
+As you can see four lines of code were added to store the avatar data.
 
 Now we need to update our User model with the following code.
 {% highlight ruby %}
@@ -183,7 +181,7 @@ Now we need to update our User model with the following code.
   validates_attachment_content_type :avatar, :content_type => /\Aimage\/.*\Z/
 ...
 {% endhighlight %}
-This attaches the uploaded file to our user model with multiple sizes that are created with imagemagick and a default avatar is given on creation.  Regex allows for multiple file types.
+This attaches the uploaded file to our user model with multiple sizes that are created with imagemagick and a default avatar is given on creation.  Using regex `/\Aimage\/.*\Z/` allows for multiple file types.
 
 
 Again in order to use the avatar params we must permit it in the application_controller.rb just like username, lets add :avatar to those params.
@@ -201,7 +199,7 @@ class ApplicationController < ActionController::Base
 end
 {% endhighlight %}
 
-Now we add the form input in the views like we did for username.  Lets assign the user the default avatar we setup with the model and allow them to set their own in the devise/registrations/edit.html.erb view above the username field.
+Now we add the form input for avatar in the views like we did for username.  Since users are created with a default avatar we should only change the edit view so that a user can change their avatar from the default. In devise/registrations/edit.html.erb add this code about the username field.
 {% highlight erb %}
 <%= image_tag(current_user.avatar.url(:thumb)) %>
   <div class="field">
@@ -209,12 +207,12 @@ Now we add the form input in the views like we did for username.  Lets assign th
     <%= f.file_field :avatar %>
   </div>
 {% endhighlight %}
-This displays their current avatar which starts as the default.png that we set in the users model with this line of code `:default_url => "/images/:style/default.png"`.  We made two styles medium and thumb so we need to two files in public/images/medium/default.png and public/images/thumb/default.png. I used these two.
+This displays their current avatar which starts as the default.png that we set in the users model with this line of code `:default_url => "/images/:style/default.png"`.  We made two styles medium and thumb so we need to save two files in public/images/medium/default.png and public/images/thumb/default.png. I used these two.
 
 ![Default Medium]({{ "/assets/default_medium.png" | absolute_url }})
 ![Default Thumb]({{ "/assets/default_thumb.png" | absolute_url }})
 
-Now we have everything we need to make our navbar drow down similar to github lets go to our application.html.erb and change the nabar to this:
+Now we have everything we need to make our dropdown navbar down similar to Github. Lets go to our application.html.erb and change the navbar to this:
 {% highlight erb %}
 <nav class="navbar navbar-dark bg-dark">
       <% if current_user %>
@@ -262,6 +260,8 @@ Now we have a clickable avatar in our navbar that users can see their username, 
   padding-bottom: 0;
 }
 {% endhighlight %}
+
+And we are finished! We now have a professional looking easy to navigate webpage for users!
 
 The Complete Repo for this project can be found at:
 [Dropdown Navbar Template][dropdown-navbar-template]
