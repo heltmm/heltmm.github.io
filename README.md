@@ -21,3 +21,10 @@ I decided to work on a blog as there are some topics that I feel like I could wr
 * rebuilt project as wrote tutorial
 * screen shots to document different stages
 * link to finished tutorial [Dropdown Navbar Template](https://github.com/heltmm/Dropdown-NavBar-Template)
+
+## Screanshots
+![alt text](assets/default_avatar.png "Default Avatar")
+
+![alt text](assets/updated_avatar.png "Updated Avatar")
+
+![alt text](assets/dropdown.png "Dropdown")
