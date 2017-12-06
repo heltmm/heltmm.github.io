@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Creating a Dropdown Navbar With Users and Avatars "
-date:   2017-12-01 12:00:43 -0800
+date:   2017-12-06 12:00:43 -0800
 categories: jekyll update
 ---
 This guide will use Devise, Paperclip, and Bootstrap to quickly implement a powerful navbar to allow users to create accounts, log in, log out, edit profiles, add avatars, all from an elegent drop down navbar.  Similar to Github.
